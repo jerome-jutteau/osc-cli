@@ -26,8 +26,10 @@ setup(
     install_requires=[
         "setuptools",
         "defusedxml==0.7.1",
-        "fire==0.1.3",
+        "fire==0.4.0",
         "requests==2.26.0",
         "xmltodict==0.11.0",
+        "M2Crypto==0.37.1",
+        "urllib3==1.26.5",
     ],
 )
