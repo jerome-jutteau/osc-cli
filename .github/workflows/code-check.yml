@@ -7,16 +7,33 @@ on:
 
 jobs:
   code-check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - name: Install dependencies
+    - name: Install integration test utilities
+      run: |
+        make setup-ubuntu-20.04
+        sudo chmod a+rwX -R /var/lib/softhsm /etc/softhsm
+    - name: Clean default integration test credentials
+      run: rm tests/config.env
+    - name: Install Python dependencies
       run: make .venv/ok
     - name: Analysing the code with pylint
       run: make test-pylint
     - name: Security check - Bandit
       run: make test-bandit
+    - name: Build python package
+      run: make build
+    - name: Run integration tests
+      env:
+        OSC_TEST_LOGIN: ${{ secrets.OSC_TEST_LOGIN }}
+        OSC_TEST_PASSWORD: ${{ secrets.OSC_TEST_PASSWORD }}
+        OSC_TEST_ACCESS_KEY: ${{ secrets.OSC_TEST_ACCESS_KEY }}
+        OSC_TEST_SECRET_KEY: ${{ secrets.OSC_TEST_SECRET_KEY }}
+        OSC_TEST_SMARTCARD_SOFTHSM: false
+        OSC_TEST_SMARTCARD_YUBIKEY: false
+      run: make test-int
