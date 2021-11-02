@@ -6,6 +6,15 @@ on:
       - master
 
 jobs:
+  tests-packaging:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: pre-commit/action@v2.0.3
+    - name: Package AppImage
+      run: cd pkg && make osc-cli-x86_64.AppImage
+    - name: Package for Windows
+      run: cd pkg && make osc-cli-x86_64.zip
   tests-python-3-6:
     runs-on: ubuntu-latest
     steps:
